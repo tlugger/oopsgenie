@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os.path
+from datetime import datetime
 
 
 def clean(file, clean_columns):
@@ -28,14 +29,15 @@ def clean(file, clean_columns):
                 writer.writerow(cleaned_row)
     print("Done")
 
-def count(file, column, limit):
+def count(file, column, limit, interval):
     with open(file, 'r') as f:
         reader = csv.reader(f, delimiter=',')
         headers = next(reader)
         if column == 'all':
             print("Total number of alerts: {}".format(sum(1 for line in f)))
         
-        indices = get_valid_colum_indices(headers, [column])
+        cols = [column, "CreatedAtDate"] if interval else [column]
+        indices = get_valid_colum_indices(headers, cols)
         if indices is None:
             print ("invalid column specified for in {}".format(file))
             return
@@ -44,6 +46,10 @@ def count(file, column, limit):
         count_map = {}
 
         for row in reader:
+            if interval:
+                dtime = datetime.strptime(row[indices[1]][0:-9], '%Y/%m/%d %H:%M:%S')
+                if dtime.hour < int(interval[0]) or dtime.hour > int(interval[1]):
+                    continue
             count_map[row[index]] = count_map.get(row[index], 0) + 1
 
     alert_list = sorted(count_map.items(),
@@ -79,6 +85,8 @@ parser.add_argument("--count", nargs='?', dest="count", default="all", const="al
                     help="count of alerts grouped by specified column name (default: count of all)")
 parser.add_argument("--limit", nargs='?', dest="limit", default=20, const=20, type=int,
                     help="limit number of results returned (default: 20)")
+parser.add_argument("--interval", nargs='+', dest="interval",
+                    help="Time interval in hours to filter alerts")
 args = parser.parse_args()
 
 if args.clean:
@@ -86,4 +94,4 @@ if args.clean:
         parser.error("The file {} does not end with 'raw.csv'".format(args.file))
     clean(args.file, args.clean)
 elif args.count:
-    count(args.file, args.count, args.limit)
+    count(args.file, args.count, args.limit, args.interval)

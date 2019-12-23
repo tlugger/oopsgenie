@@ -3,12 +3,13 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
 
 ### Functions
 * Clean
-  Specify rows from a *raw.csv file into a *clean.csv file
+  * Specify rows from a *raw.csv file into a *clean.csv file
 * Count
-  Count the number of alerts matching a specified column name (default Alias). If no column is specified, return the total count of alerts
+  * Count the number of alerts matching a specified column name (default Alias). If no column is specified, return the total count of alerts
+* Time Interval Filtering
+  * An interval to filter the "CreatedAtDate" hour of each alert. This can be added to count.
 
 ### Future functionality
-* Time of day analysis
 * Created to Updated (typically alert creation to close) duration
 
 ### Running
