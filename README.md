@@ -28,7 +28,7 @@ source venv/bin/activate
 
 
 Example usage:
-- Clean alert-data-raw.csv to only include the columns "Alias", "Message", and "Teams"
+- Clean alert-data-raw.csv to only include the columns "Alias", "Message", and "Teams" (creates alert-data-clean.csv)
 ```
 python classify.py alert-data-raw.csv --clean Alias Message Teams
 ```
@@ -55,5 +55,5 @@ python classify.py alert-data-raw.csv --count Alias --match gdpr
 
 - Get a count of all alerts grouped by the column "Alias" that updated within 5 minutes of creation
 ```
-python classify.py alert-data-tier1-raw.csv --count Alias --update-minutes 5
+python classify.py alert-data-raw.csv --count Alias --update-minutes 5
 ```
