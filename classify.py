@@ -29,7 +29,7 @@ def clean(file, clean_columns):
                 writer.writerow(cleaned_row)
     print("Done")
 
-def count(file, column, limit, interval, match):
+def count(file, column, limit, interval, match, update_minutes):
     with open(file, 'r') as f:
         reader = csv.reader(f, delimiter=',')
         headers = next(reader)
@@ -37,6 +37,8 @@ def count(file, column, limit, interval, match):
             print("Total number of alerts: {}".format(sum(1 for line in f)))
         
         cols = [column, "CreatedAtDate"] if interval else [column]
+        if update_minutes:
+            cols.extend(["CreatedAt", "UpdatedAt"])
         indices = get_valid_colum_indices(headers, cols)
         if indices is None:
             print ("invalid column specified for in {}".format(file))
@@ -48,6 +50,11 @@ def count(file, column, limit, interval, match):
         for row in reader:
             if match:
                 if match not in row[index]:
+                    continue
+            if update_minutes:
+                ms_to_update = float(row[indices[-1]]) - float(row[indices[-2]])
+                min_to_update = ms_to_update/1000/60
+                if min_to_update > int(update_minutes):
                     continue
             if interval:
                 if len(interval) != 2:
@@ -96,6 +103,8 @@ parser.add_argument("--interval", nargs='+', dest="interval",
                     help="Time interval in hours to filter alerts")
 parser.add_argument("--match", nargs='?', dest="match", default=None, const=None,
                     help="Regex match against specified column name for count")
+parser.add_argument("--update-minutes", nargs='?', dest="update_minutes", default=None, const=None,
+                    help="Number of minutes between 'CreatedAt' and 'UpdatedAt'")
 args = parser.parse_args()
 
 if args.clean:
@@ -103,4 +112,4 @@ if args.clean:
         parser.error("The file {} does not end with 'raw.csv'".format(args.file))
     clean(args.file, args.clean)
 elif args.count:
-    count(args.file, args.count, args.limit, args.interval, args.match)
+    count(args.file, args.count, args.limit, args.interval, args.match, args.update_minutes)
