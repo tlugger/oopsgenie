@@ -27,6 +27,8 @@ if __name__ == '__main__':
                         help="Regex match against specified column name for count")
     parser.add_argument("--update-minutes", nargs='?', dest="update_minutes", default=None, const=None,
                         help="Number of minutes between 'CreatedAt' and 'UpdatedAt'")
+    parser.add_argument("--outfile", nargs='?', dest="outfile", default=None, const=None,
+                        help="Optional file to output results of count")
     args = parser.parse_args()
 
     if args.clean:
@@ -34,4 +36,5 @@ if __name__ == '__main__':
             parser.error("The file {} does not end with 'raw.csv'".format(args.file))
         Cleaner.clean(args.file, args.clean, args.remove)
     elif args.count:
-        Counter.count(args.file, args.count, args.limit, args.interval, args.match, args.update_minutes)
+        Counter.count(args.file, args.count, args.limit, args.interval,
+                      args.match, args.update_minutes, args.outfile)

@@ -5,7 +5,7 @@ from utils import get_valid_colum_indices
 
 class Counter:
 
-    def count(file, column, limit, interval, match, update_minutes):
+    def count(file, column, limit, interval, match, update_minutes, outfile):
         with open(file, 'r') as f:
             reader = csv.reader(f, delimiter=',')
             headers = next(reader)
@@ -46,8 +46,16 @@ class Counter:
                             key = lambda kv:(kv[1], kv[0]), 
                             reverse=True)
 
-        for alert, num in alert_list:
-            if limit <= 0:
-                break
-            print("{}: {}".format(alert, num))
-            limit -=1
+        if not outfile:
+            for alert, num in alert_list:
+                if limit <= 0:
+                    break
+                print("{}: {}".format(alert, num))
+                limit -=1
+        else:
+            with open(outfile, 'w') as out:
+                writer = csv.writer(out, delimiter=',')
+                writer.writerow([column, "Count"])
+                for row in alert_list:
+                    writer.writerow(row)
+            print("Done")

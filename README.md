@@ -16,6 +16,8 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
   * A keyword to filter the specified --count column against
 * Minutes between update **(--update-minutes _minutes_)**
   * A filter matching alerts that update within x minutes (between "CreatedAt" and "UpdatedAt" timestamps)
+* Output file **(--outfile _filename_)**
+  * A file to output the results of --count
 
 ### Future functionality
 * TBD
@@ -63,4 +65,9 @@ python main.py alert-data-raw.csv --count Alias --match gdpr
 - Get a count of all alerts grouped by the column "Alias" that updated within 5 minutes of creation
 ```
 python main.py alert-data-raw.csv --count Alias --update-minutes 5
+```
+
+- Get a count of alerts grouped by the column "Alias" and store in a file named "alias-count.csv
+```
+python main.py alert-data-raw.csv --count Alias --outfile alias-count.csv
 ```
