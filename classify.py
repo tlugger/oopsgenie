@@ -47,6 +47,10 @@ def count(file, column, limit, interval):
 
         for row in reader:
             if interval:
+                if len(interval) != 2:
+                    print ("invalid use of --interval, must give 2 values")
+                # CreatedAtDate in this format 12/12/12 12:12:12.123-4567
+                # cut off the last 9 values to properly parse
                 dtime = datetime.strptime(row[indices[1]][0:-9], '%Y/%m/%d %H:%M:%S')
                 if dtime.hour < int(interval[0]) or dtime.hour > int(interval[1]):
                     continue

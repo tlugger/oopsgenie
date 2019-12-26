@@ -22,4 +22,6 @@ source venv/bin/activate
 Run commands:
 ```
 python classify.py alert-data-raw.csv --clean Alias Message Teams
+python classify.py alert-data-raw.csv --count Alias
+python classify.py alert-data-raw.csv --count Alias --interval 4 13
 ```
