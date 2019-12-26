@@ -4,7 +4,7 @@ import os.path
 from datetime import datetime
 
 
-def clean(file, clean_columns):
+def clean(file, clean_columns, remove):
     print ("Cleaning {}".format(file))
     print ("For columns {}".format(clean_columns))
 
@@ -13,6 +13,11 @@ def clean(file, clean_columns):
     with open(file, 'r') as raw_file:
         reader = csv.reader(raw_file, delimiter=',')
         headers = next(reader)
+
+        col_count = len(clean_columns)
+
+        if remove:
+            clean_columns.append("Message")
         
         indices = get_valid_colum_indices(headers, clean_columns)
         if indices is None:
@@ -23,9 +28,16 @@ def clean(file, clean_columns):
             writer = csv.writer(clean_file, delimiter=',')
             writer.writerow(clean_columns)
             for row in reader:
+                if remove:
+                    blacklisted = False
+                    for r in remove:
+                        if r in row[indices[-1]]:
+                            blacklisted = True
+                    if blacklisted:
+                        continue
                 cleaned_row = []
-                for i in indices:
-                    cleaned_row.append(row[i])
+                for i in range(col_count):
+                    cleaned_row.append(row[indices[i]])
                 writer.writerow(cleaned_row)
     print("Done")
 
@@ -94,7 +106,10 @@ def is_valid_file(parser, arg):
 parser = argparse.ArgumentParser(description="OpsGenie Alert Classifier")
 parser.add_argument('file', type=lambda x: is_valid_file(parser, x),
                     metavar='FILE', help='file to work with')
-parser.add_argument("--clean", nargs='+', dest="clean", help="clean data from a raw file")
+parser.add_argument("--clean", nargs='+', dest="clean",
+                    help="create a 'clean' file with whitelisted columns a raw file")
+parser.add_argument("--remove", nargs='+', dest="remove",
+                    help="Match rows to remove based the 'Message' column")
 parser.add_argument("--count", nargs='?', dest="count", default="all", const="all",
                     help="count of alerts grouped by specified column name (default: count of all)")
 parser.add_argument("--limit", nargs='?', dest="limit", default=20, const=20, type=int,
@@ -110,6 +125,6 @@ args = parser.parse_args()
 if args.clean:
     if not args.file.endswith("raw.csv"):
         parser.error("The file {} does not end with 'raw.csv'".format(args.file))
-    clean(args.file, args.clean)
+    clean(args.file, args.clean, args.remove)
 elif args.count:
     count(args.file, args.count, args.limit, args.interval, args.match, args.update_minutes)
