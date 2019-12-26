@@ -4,8 +4,10 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
 ### Functions
 * Clean **(--clean _cloumn1_ _column2_ _..._)**
   * Specify rows from a *raw.csv file into a *clean.csv file
+* Remove **(--remove _keyword1_ _keyword2_ _..._)**
+  * A keyword to filter each cleaned row against. Matches on any value in the 'Message' column.
 * Count **(--count _column_)**
-  * Count the number of alerts matching a specified column name (default Alias). If no column is specified, return the total count of alerts
+  * Count the number of alerts matching a specified column name (default all alerts in csv). If no column is specified, return the total count of alerts
 * Limit **(--limit _limit_)**
   * Limit the number of results returned, ordered by count highest to lowest
 * Time Interval Filtering **(--interval _hour1_ _hour2_)**
@@ -28,9 +30,14 @@ source venv/bin/activate
 
 
 Example usage:
-- Clean alert-data-raw.csv to only include the columns "Alias", "Message", and "Teams" (creates alert-data-clean.csv)
+- Clean alert-data-raw.csv to only include the columns "Alias", "CreatedAtDate", and "Teams" (creates alert-data-clean.csv)
 ```
-python classify.py alert-data-raw.csv --clean Alias Message Teams
+python classify.py alert-data-raw.csv --clean Alias CreatedAtDate Teams
+```
+
+- Clean alert-data-raw.csv to only include the column "Alias", "CreatedAtDate", and "Teams" but exclude any message containing "staging"
+```
+python classify.py alert-data-raw.csv --clean Alias CreatedAtDate Teams --remove staging
 ```
 
 - Get a count of all alerts
