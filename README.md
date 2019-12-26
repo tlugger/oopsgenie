@@ -32,35 +32,35 @@ source venv/bin/activate
 Example usage:
 - Clean alert-data-raw.csv to only include the columns "Alias", "CreatedAtDate", and "Teams" (creates alert-data-clean.csv)
 ```
-python classify.py alert-data-raw.csv --clean Alias CreatedAtDate Teams
+python main.py alert-data-raw.csv --clean Alias CreatedAtDate Teams
 ```
 
 - Clean alert-data-raw.csv to only include the column "Alias", "CreatedAtDate", and "Teams" but exclude any message containing "staging"
 ```
-python classify.py alert-data-raw.csv --clean Alias CreatedAtDate Teams --remove staging
+python main.py alert-data-raw.csv --clean Alias CreatedAtDate Teams --remove staging
 ```
 
 - Get a count of all alerts
 ```
-python classify.py alert-data-raw.csv --count
+python main.py alert-data-raw.csv --count
 ```
 
 - Get a count of alerts grouped by the column "Alias"
 ```
-python classify.py alert-data-raw.csv --count Alias
+python main.py alert-data-raw.csv --count Alias
 ```
 
 - Get a count of all alerts grouped by the column "Alias" that are created between the hours of 04 and 13 (UTC)
 ```
-python classify.py alert-data-raw.csv --count Alias --interval 4 13
+python main.py alert-data-raw.csv --count Alias --interval 4 13
 ```
 
 - Get a count of all alerts grouped by the column "Alias" that match the keyword "gdpr"
 ```
-python classify.py alert-data-raw.csv --count Alias --match gdpr
+python main.py alert-data-raw.csv --count Alias --match gdpr
 ```
 
 - Get a count of all alerts grouped by the column "Alias" that updated within 5 minutes of creation
 ```
-python classify.py alert-data-raw.csv --count Alias --update-minutes 5
+python main.py alert-data-raw.csv --count Alias --update-minutes 5
 ```
