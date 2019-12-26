@@ -8,6 +8,8 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
   * Count the number of alerts matching a specified column name (default Alias). If no column is specified, return the total count of alerts
 * Time Interval Filtering
   * An interval to filter the "CreatedAtDate" hour of each alert. This can be added to count.
+* Keyword matching
+  * A keyword to filter the specified --count column against
 
 ### Future functionality
 * Created to Updated (typically alert creation to close) duration
@@ -24,4 +26,5 @@ Run commands:
 python classify.py alert-data-raw.csv --clean Alias Message Teams
 python classify.py alert-data-raw.csv --count Alias
 python classify.py alert-data-raw.csv --count Alias --interval 4 13
+python classify.py alert-data-raw.csv --count Alias --match gdpr
 ```

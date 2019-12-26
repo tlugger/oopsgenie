@@ -29,7 +29,7 @@ def clean(file, clean_columns):
                 writer.writerow(cleaned_row)
     print("Done")
 
-def count(file, column, limit, interval):
+def count(file, column, limit, interval, match):
     with open(file, 'r') as f:
         reader = csv.reader(f, delimiter=',')
         headers = next(reader)
@@ -46,6 +46,9 @@ def count(file, column, limit, interval):
         count_map = {}
 
         for row in reader:
+            if match:
+                if match not in row[index]:
+                    continue
             if interval:
                 if len(interval) != 2:
                     print ("invalid use of --interval, must give 2 values")
@@ -91,6 +94,8 @@ parser.add_argument("--limit", nargs='?', dest="limit", default=20, const=20, ty
                     help="limit number of results returned (default: 20)")
 parser.add_argument("--interval", nargs='+', dest="interval",
                     help="Time interval in hours to filter alerts")
+parser.add_argument("--match", nargs='?', dest="match", default=None, const=None,
+                    help="Regex match against specified column name for count")
 args = parser.parse_args()
 
 if args.clean:
@@ -98,4 +103,4 @@ if args.clean:
         parser.error("The file {} does not end with 'raw.csv'".format(args.file))
     clean(args.file, args.clean)
 elif args.count:
-    count(args.file, args.count, args.limit, args.interval)
+    count(args.file, args.count, args.limit, args.interval, args.match)
