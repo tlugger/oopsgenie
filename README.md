@@ -19,6 +19,12 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
 * Output file **(--outfile _filename_)**
   * A file to output the results of --count
 
+**Note:** `limit`, `interval`, `match` and `outfile` can all be chained to filter alerts in order of: 
+  * keyword match
+  * minutes between update
+  * time interval
+  * limit or outfile (cannot use both)
+
 ### Future functionality
 * TBD
 
