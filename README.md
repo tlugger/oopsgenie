@@ -3,21 +3,21 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
 
 ### Functions
 * Clean **(--clean _cloumn1_ _column2_ _..._)**
-  * Specify rows from a *raw.csv file into a *clean.csv file
-* Remove **(--remove _keyword1_ _keyword2_ _..._)**
-  * A keyword to filter each cleaned row against. Matches on any value in the 'Message' column.
+    * Specify rows from a *raw.csv file into a *clean.csv file
+    * Remove **(--remove _keyword1_ _keyword2_ _..._)**
+        * A keyword to filter each cleaned row against. Matches on any value in the 'Message' column.
 * Count **(--count _column_)**
-  * Count the number of alerts matching a specified column name (default all alerts in csv). If no column is specified, return the total count of alerts
-* Limit **(--limit _limit_)**
-  * Limit the number of results returned, ordered by count highest to lowest
-* Time Interval Filtering **(--interval _hour1_ _hour2_)**
-  * An interval to filter the "CreatedAtDate" hour of each alert. This can be added to count.
-* Keyword matching **(--match _keyword_)**
-  * A keyword to filter the specified --count column against
-* Minutes between update **(--update-minutes _minutes_)**
-  * A filter matching alerts that update within x minutes (between "CreatedAt" and "UpdatedAt" timestamps)
-* Output file **(--outfile _filename_)**
-  * A file to output the results of --count
+    * Count the number of alerts matching a specified column name (default all alerts in csv). If no column is specified, return the total count of alerts
+    * Limit **(--limit _limit_)**
+        * Limit the number of results returned, ordered by count highest to lowest
+    * Time Interval Filtering **(--interval _hour1_ _hour2_)**
+        * An interval to filter the "CreatedAtDate" hour of each alert. This can be added to count.
+    * Keyword matching **(--match _keyword_)**
+        * A keyword to filter the specified --count column against
+    * Minutes between update **(--update-minutes _minutes_)**
+        * A filter matching alerts that update within x minutes (between "CreatedAt" and "UpdatedAt" timestamps)
+    * Output file **(--outfile _filename_)**
+        * A file to output the results of --count
 
 **Note:** `limit`, `interval`, `match` and `outfile` can all be chained to filter results of `count`. If `outfile` is specified `limit` is ignored.
 
