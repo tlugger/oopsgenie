@@ -2,17 +2,17 @@
 Helpful functions for analyzing an export of OpsGenie alerts and collecting useful data on them.
 
 ### Functions
-* Clean *(--clean _cloumn1_ _column2_ _..._)*
+* Clean **(--clean _cloumn1_ _column2_ _..._)**
   * Specify rows from a *raw.csv file into a *clean.csv file
-* Count *(--count _column_)*
+* Count **(--count _column_)**
   * Count the number of alerts matching a specified column name (default Alias). If no column is specified, return the total count of alerts
-* Limit *(--limit _limit_)*
+* Limit **(--limit _limit_)**
   * Limit the number of results returned, ordered by count highest to lowest
-* Time Interval Filtering *(--interval _hour1_ _hour2_)*
+* Time Interval Filtering **(--interval _hour1_ _hour2_)**
   * An interval to filter the "CreatedAtDate" hour of each alert. This can be added to count.
-* Keyword matching *(--match _keyword_)*
+* Keyword matching **(--match _keyword_)**
   * A keyword to filter the specified --count column against
-* Minutes between update *(--update-minutes _minutes_)*
+* Minutes between update **(--update-minutes _minutes_)**
   * A filter matching alerts that update within x minutes (between "CreatedAt" and "UpdatedAt" timestamps)
 
 ### Future functionality
