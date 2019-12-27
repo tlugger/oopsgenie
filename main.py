@@ -29,6 +29,11 @@ if __name__ == '__main__':
                         help="Number of minutes between 'CreatedAt' and 'UpdatedAt'")
     parser.add_argument("--outfile", nargs='?', dest="outfile", default=None, const=None,
                         help="Optional file to output results of count")
+    parser.add_argument("--fuzzy-threshold", nargs='?', dest="fuzzy_thresh", default=100, const=None, type=int,
+                        help="Threshold for alert fuzzy match (default: 100 - so 100% match)")
+    parser.add_argument("--remove-numbers", nargs='?', dest="remove_numbers", default=False, const=None, type=bool,
+                        help="Remove numbers from alias before doing fuzzy matching (default: False). \
+                        To be used in conjuction with the fuzzy threshold flag")
     args = parser.parse_args()
 
     if args.clean:
@@ -36,5 +41,7 @@ if __name__ == '__main__':
             parser.error("The file {} does not end with 'raw.csv'".format(args.file))
         Cleaner.clean(args.file, args.clean, args.remove)
     elif args.count:
-        Counter.count(args.file, args.count, args.limit, args.interval,
-                      args.match, args.update_minutes, args.outfile)
+        counter = Counter()
+        counter.count(file=args.file, column=args.count, limit=args.limit, interval=args.interval,
+                      match=args.match, fuzzy_thresh=args.fuzzy_thresh, remove_numbers=args.remove_numbers, 
+                      update_minutes=args.update_minutes, outfile=args.outfile)
