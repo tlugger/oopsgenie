@@ -34,6 +34,8 @@ if __name__ == '__main__':
     parser.add_argument("--remove-numbers", nargs='?', dest="remove_numbers", default=False, const=None, type=bool,
                         help="Remove numbers from alias before doing fuzzy matching (default: False). \
                         To be used in conjuction with the fuzzy threshold flag")
+    parser.add_argument('--alias-strip-list', type=lambda x: is_valid_file(parser, x),
+                        dest='strip_file', help='csv file with a column of values to strip', metavar="FILE")
     args = parser.parse_args()
 
     if args.clean:
@@ -44,4 +46,4 @@ if __name__ == '__main__':
         counter = Counter()
         counter.count(file=args.file, column=args.count, limit=args.limit, interval=args.interval,
                       match=args.match, fuzzy_thresh=args.fuzzy_thresh, remove_numbers=args.remove_numbers, 
-                      update_minutes=args.update_minutes, outfile=args.outfile)
+                      update_minutes=args.update_minutes, outfile=args.outfile, alias_strip_list=args.strip_file)
