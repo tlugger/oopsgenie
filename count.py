@@ -7,12 +7,12 @@ from fuzzywuzzy import fuzz
 class Counter(object):
 
     def count(self, file, column, limit, interval, match, fuzzy_thresh, remove_numbers, update_minutes, outfile, alias_strip_list):
+        strip_list = []
         if alias_strip_list:
             with open(alias_strip_list, 'rt', encoding='utf-8') as f:
                 csv_reader = csv.reader(f)
                 values_to_strip = list(csv_reader)
                 strip_list = [item[0] for item in values_to_strip] 
-                print(strip_list)
 
         with open(file, 'r') as f:
             reader = csv.reader(f, delimiter=',')
@@ -32,6 +32,10 @@ class Counter(object):
             count_map = {}
 
             for row in reader:
+                for strip in strip_list:
+                    if strip in row[1]: 
+                        row[1] = row[1].replace(strip, "")
+                        break
                 if match:
                     if match not in row[index]:
                         continue
