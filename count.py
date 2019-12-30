@@ -55,7 +55,7 @@ class Counter(object):
 
                 current_count = count_map.get(row[index], 0)
                 if current_count != 0:
-                    current_count = current_count.get('count')
+                    current_count = current_count.get("count")
                 count_map[row[index]] = {"count": (current_count + 1), "fuzzy": False}
 
         # if the fuzzy threshold is set to 100% match, we can skip this
@@ -66,6 +66,7 @@ class Counter(object):
             count_map = self.count_fuzzy_matches(count_map, fuzzy_thresh, remove_numbers)
 
         alert_list = sorted(count_map.items(), 
+                            key = lambda kv:(kv[1].get("count"), kv[0]), 
                             reverse=True)
 
         if not outfile:
@@ -77,9 +78,15 @@ class Counter(object):
         else:
             with open(outfile, 'w') as out:
                 writer = csv.writer(out, delimiter=',')
-                writer.writerow([column, "Count", "Includes Fuzzy Matches"])
+                if fuzzy_thresh < 100:
+                    writer.writerow([column, "Count", "Includes Fuzzy Matches"])
+                else:
+                    writer.writerow([column, "Count"])
                 for row in alert_list:
-                    row_to_write = (row[0], row[1].get("count"), row[1].get("fuzzy"))
+                    if fuzzy_thresh < 100:
+                        row_to_write = (row[0], row[1].get("count"), row[1].get("fuzzy"))
+                    else:
+                        row_to_write = (row[0], row[1].get("count"))
                     writer.writerow(row_to_write)
             print("Done")
 
