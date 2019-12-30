@@ -18,6 +18,13 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
         * A filter matching alerts that update within x minutes (between "CreatedAt" and "UpdatedAt" timestamps)
     * Output file **(--outfile _filename_)**
         * A file to output the results of --count
+    * Fuzzy Threshold **(--fuzzy-threshold _threshold_)**
+        * A threshold of tolerance for fuzzy matching on your --count. This is based on Levenshtein Distance; If you don't set this parameter, it will default to perfect matches. 
+    * Remove Numbers **(--remove-numbers _boolean_)**
+        * Remove numbers from the alert alias before performing fuzzy matching in --count. This defaults to False and should be used in conjunction with the fuzzy threshold flag.
+    * Alias Strip List File **(--alias-strip-list _csv_)**
+        * Remove strings from the alert alias before performing matching in --count. Input for this flag is a csv without headers that contains a single column of strings to strip out of the alias (e.g. server names).
+
 
 **Note:** `limit`, `interval`, `match` and `outfile` can all be chained to filter results of `count`. If `outfile` is specified `limit` is ignored.
 
@@ -30,6 +37,7 @@ This requires Python3
 pip install virtualenv
 virtualenv -p python3 venv
 source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 
@@ -52,6 +60,21 @@ python main.py alert-data-raw.csv --count
 - Get a count of alerts grouped by the column "Alias"
 ```
 python main.py alert-data-raw.csv --count Alias
+```
+
+- Get a count of alerts grouped by the column "Alias" with server names stripped out
+```
+python main.py alert-data-raw.csv --count Alias --alias-strip-list server_names.csv
+```
+
+- Get a count of alerts grouped by the column "Alias" and with a fuzzy matching threshold of 90%
+```
+python main.py alert-data-raw.csv --count Alias --fuzzy-threshold 90
+```
+
+- Get a count of alerts grouped by the column "Alias" and with a fuzzy matching threshold of 90% and numbers removed from the alias before the fuzzy matching
+```
+python main.py alert-data-raw.csv --count Alias --fuzzy-threshold 90 --remove-numbers True
 ```
 
 - Get a count of all alerts grouped by the column "Alias" that are created between the hours of 04 and 13 (UTC)
