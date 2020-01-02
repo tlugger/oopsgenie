@@ -6,14 +6,7 @@ from fuzzywuzzy import fuzz
 
 class Counter(object):
 
-    def count(self, file, column, limit, interval, match, fuzzy_thresh, remove_numbers, update_minutes, outfile, alias_strip_list):
-        strip_list = []
-        if alias_strip_list:
-            with open(alias_strip_list, 'rt', encoding='utf-8') as f:
-                csv_reader = csv.reader(f)
-                values_to_strip = list(csv_reader)
-                strip_list = [item[0] for item in values_to_strip] 
-
+    def count(self, file, column, limit, interval, match, update_minutes, outfile):
         with open(file, 'r') as f:
             reader = csv.reader(f, delimiter=',')
             headers = next(reader)
@@ -32,10 +25,6 @@ class Counter(object):
             count_map = {}
 
             for row in reader:
-                for strip in strip_list:
-                    if strip in row[1]: 
-                        row[1] = row[1].replace(strip, "")
-                        break
                 if match:
                     if match not in row[index]:
                         continue
@@ -53,20 +42,15 @@ class Counter(object):
                     if dtime.hour < int(interval[0]) or dtime.hour > int(interval[1]):
                         continue
 
-                current_count = count_map.get(row[index], 0)
-                if current_count != 0:
-                    current_count = current_count.get("count")
-                count_map[row[index]] = {"count": (current_count + 1), "fuzzy": False}
+                count_map[row[index]] = count_map.get(row[index], 0) + 1
+        
+        return self.format_output(count_map, column, outfile, limit)
 
-        # if the fuzzy threshold is set to 100% match, we can skip this
-        # O Notation murdering step
-        if fuzzy_thresh < 100:
-            # Get a list of the keys in the count_map
-            # Then see if any are a fuzzy match
-            count_map = self.count_fuzzy_matches(count_map, fuzzy_thresh, remove_numbers)
-
+    @classmethod
+    def format_output(self, count_map, column, outfile, limit, fuzzy=False):
+        
         alert_list = sorted(count_map.items(), 
-                            key = lambda kv:(kv[1].get("count"), kv[0]), 
+                            key = lambda kv:(kv[1], kv[0]), 
                             reverse=True)
 
         if not outfile:
@@ -76,19 +60,51 @@ class Counter(object):
                 print("{}: {}".format(alert, num))
                 limit -=1
         else:
-            with open(outfile, 'w') as out:
+            output_file = 'fuzzy-' + outfile if fuzzy else outfile
+            with open(output_file, 'w') as out:
                 writer = csv.writer(out, delimiter=',')
-                if fuzzy_thresh < 100:
-                    writer.writerow([column, "Count", "Includes Fuzzy Matches"])
-                else:
-                    writer.writerow([column, "Count"])
+                writer.writerow([column, "Count"])
                 for row in alert_list:
-                    if fuzzy_thresh < 100:
-                        row_to_write = (row[0], row[1].get("count"), row[1].get("fuzzy"))
-                    else:
-                        row_to_write = (row[0], row[1].get("count"))
-                    writer.writerow(row_to_write)
+                    writer.writerow(row)
             print("Done")
+
+class FuzzyCounter(Counter):
+
+    def count(self, file, column, limit, threshold, remove_numbers, outfile, alias_strip_list):
+        strip_list = []
+        if alias_strip_list:
+            with open(alias_strip_list, 'rt', encoding='utf-8') as f:
+                csv_reader = csv.reader(f)
+                values_to_strip = list(csv_reader)
+                strip_list = [item[0] for item in values_to_strip] 
+
+        with open(file, 'r') as f:
+            reader = csv.reader(f, delimiter=',')
+            headers = next(reader)
+
+            indices = get_valid_colum_indices(headers, [column])
+            if indices is None:
+                print ("invalid column specified for in {}".format(file))
+                return
+            
+            index = indices[0]
+            count_map = {}
+
+            for row in reader:
+                for strip in strip_list:
+                    if strip in row[1]: 
+                        row[1] = row[1].replace(strip, "")
+                        break
+                count_map[row[index]] = count_map.get(row[index], 0) + 1
+
+        # if the fuzzy threshold is set to 100% match, we can skip this
+        # O Notation murdering step
+        if threshold < 100:
+            # Get a list of the keys in the count_map
+            # Then see if any are a fuzzy match
+            count_map = self.count_fuzzy_matches(count_map, threshold, remove_numbers)
+
+        return self.format_output(count_map, column, outfile, limit, fuzzy=True)
 
     @classmethod
     def count_fuzzy_matches(self, count_map, fuzzy_thresh, remove_numbers):
@@ -106,7 +122,7 @@ class Counter(object):
                     fuzzy_match_ratio = fuzz.ratio(new_key, new_alert_key) 
                     if fuzzy_match_ratio >= fuzzy_thresh:
                         if key != alert_key:
-                            count_map[key] = {"count": (count_map[key]['count'] + count_map[alert_key]['count']), "fuzzy": True}
+                            count_map[key] = count_map[key] + count_map[alert_key]
                             skip_list.append(alert_key)
         for skip in skip_list:
             if count_map.get(skip):
