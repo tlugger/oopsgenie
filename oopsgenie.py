@@ -9,7 +9,7 @@ def is_valid_file(parser, arg):
     return arg 
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(description="OpsGenie Alert Classifier")
     parser.add_argument('file', type=lambda x: is_valid_file(parser, x),
                         metavar='FILE', help='file to work with')
@@ -47,3 +47,6 @@ if __name__ == '__main__':
         counter.count(file=args.file, column=args.count, limit=args.limit, interval=args.interval,
                       match=args.match, fuzzy_thresh=args.fuzzy_thresh, remove_numbers=args.remove_numbers, 
                       update_minutes=args.update_minutes, outfile=args.outfile, alias_strip_list=args.strip_file)
+
+if __name__ == "__main__":
+    main()
