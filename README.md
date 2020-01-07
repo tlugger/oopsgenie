@@ -29,7 +29,8 @@ Helpful functions for analyzing an export of OpsGenie alerts and collecting usef
 
 
 ### Future functionality
-* TBD
+* Implement mathplotlib graphing for alerts over time
+* Wrap oopsgenie into a pip installable CLI tool
 
 ### Running
 This requires Python3
